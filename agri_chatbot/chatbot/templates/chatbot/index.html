@@ -1,0 +1,254 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agriculture Weather & Chatbot</title>
+
+  <!-- Fonts & CSS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+</head>
+<body>
+  <nav class="navbar">
+    <a class="nav-logo">AgriBot</a>
+    <ul class="nav-links">
+      <li><a href="#">My Weather</a></li>
+      <!-- <li><a href="#">Search</a></li> -->
+      <li><a href="#marketplace">Marketplace</a></li>
+      <li><a href="{% url 'chat_interface' %}" class="btn">Chatbot</a></li>
+    </ul>
+    <button id="themeToggle" class="theme-toggle"><i class="bx bx-moon"></i></button>
+  </nav>
+
+  <!-- Three equal panels -->
+  <div class="index-panels">
+    <!-- 1: Intro & CTA -->
+    <section class="panel left-panel">
+      <h1>Welcome to AgriBot</h1>
+      <p>Your AI-powered agriculture assistant. Ask about weather, crop tips, market prices & more.</p>
+      <ul class="features-list">
+        <li>🌦️ Real-time weather</li>
+        <li>📈 15-day forecasts</li>
+        <li>💬 Smart agronomy chatbot</li>
+        <li>🛒 Live marketplace data</li>
+      </ul>
+      <a href="{% url 'chat_interface' %}" class="btn large-btn">Talk to AgriBot</a>
+    
+      <!-- ✨ Liveness Section -->
+      <div class="liveness">
+        <!-- 1: Agriculture Video -->
+        <div class="live-video">
+          <video autoplay muted loop playsinline>
+            <source src="{% static 'video/farm.mp4' %}" type="video/mp4" />
+            <!-- fallback image if video cannot play -->
+            <img src="{% static 'images/farm4.png' %}" alt="Agriculture demo" />
+          </video>
+        </div>
+    
+        <!-- 2: Animated Chart -->
+        <div class="live-chart">
+          <canvas id="liveTrendChart" width="300" height="200"></canvas>
+        </div>
+      </div>
+    </section>
+    
+
+    <!-- 2: Weather + Map -->
+    <section class="panel right-panel">
+      <div class="weather-container">
+        <div class="sub-container" id="weatherPanel">
+          <p id="message" class="message"></p>
+          <div class="controls">
+            <button id="grantBtn" class="btn">Use My Location</button>
+            <input id="cityInput" class="input-text" placeholder="Enter city..." />
+            <button id="searchBtn" class="btn">Search</button>
+          </div>
+          <div id="loading"><div class="spinner"></div><p>Loading...</p></div>
+          <div id="info">
+            <h2><span id="cityName"></span> <img id="countryIcon" width="24" /></h2>
+            <p id="weatherDesc"></p>
+            <h3 id="temp"></h3>
+            <div class="parameter-container">
+              <div class="parameter"><p>Wind</p><span id="windspeed"></span></div>
+              <div class="parameter"><p>Humidity</p><span id="humidity"></span></div>
+              <div class="parameter"><p>Clouds</p><span id="cloudiness"></span></div>
+            </div>
+            <div id="cropRec"><h3>Crops in Region:</h3><p id="cropText"></p></div>
+            <div id="chartWrapper">
+              <h3>Weather Trend (15 days)</h3>
+              <canvas id="weatherChart" width="300" height="200"></canvas>
+            </div>
+          </div>
+        </div>
+        <div id="map" class="sub-container"></div>
+      </div>
+    </section>
+  </div>
+
+    <!-- 3: Marketplace -->
+    {% comment %} Full-Height Marketplace Section with Expanded Carousel Images {% endcomment %}
+<section id="marketplace" class="agri-marketplace">
+  <div class="container">
+    <!-- LIVE COMMODITY SEARCH -->
+    <div class="market-search">
+      <input type="text" id="commodityInput" placeholder="Enter commodity (e.g., maize)" />
+      <select id="countySelect">
+        <option value="all">All Counties</option>
+        {% for county in counties %}
+          <option value="{{ county.slug }}">{{ county.name }}</option>
+        {% endfor %}
+      </select>
+      <button id="searchCommodityBtn" class="btn">Search Prices</button>
+    </div>
+   <!-- PRICE RESULTS -->
+   <div id="priceResults" class="price-results"></div>
+
+   <!-- SUBTOPIC INFO LINKS -->
+  </br>
+   <div class="subtopics">
+     <a href="https://support.google.com/identity" target="_blank">Identity Verification Tips</a>
+     <a href="https://developers.google.com/maps" target="_blank">Location-based Filtering</a>
+     <a href="https://news.google.com/search?q=agriculture+market+prices" target="_blank">Agri Market News</a>
+     <a href="https://trends.google.com/trends/explore?date=now%207-d&geo=KE&q=maize" target="_blank">Maize Trends</a>
+   </div>
+
+    <!-- SHOWCASE CAROUSEL -->
+    <div class="showcase-carousel">
+      <div class="carousel-item">
+        <img src="{% static 'assets/chatbot.png' %}" alt="Chatbot Interface" />
+        <div class="overlay">AgriBot Smart Chat</div>
+      </div>
+      <div class="carousel-item">
+        <img src="{% static 'images/farm1.png' %}" alt="Fresh Produce" />
+        <div class="overlay">Fresh Produce Listings</div>
+      </div>
+      <div class="carousel-item">
+        <img src="{% static 'images/farm2.png' %}" alt="Price Ticker" />
+        <div class="overlay">Live Price Ticker</div>
+      </div>
+      <div class="carousel-item">
+        <img src="{% static 'images/farm3.png' %}" alt="Logistics" />
+        <div class="overlay">Logistics & Fulfilment</div>
+      </div>
+    </div>
+
+    <!-- MODULES GRID -->
+    <div class="modules-grid">
+      <div class="module">
+        <h3>User &amp; Identity</h3>
+        <ul>
+          <li>Multi-role signup</li>
+          <li>Huduma Namba KYC</li>
+          <li>USSD Mobile Flow</li>
+        </ul>
+      </div>
+      <div class="module">
+        <h3>Products &amp; Services</h3>
+        <ul>
+          <li>Certified Seeds</li>
+          <li>Fertilizers & Agrochemicals</li>
+          <li>Advisory Services</li>
+        </ul>
+      </div>
+      <div class="module">
+        <h3>Market Mechanics</h3>
+        <ul>
+          <li>Search & Filters</li>
+          <li>Auction & Fixed Prices</li>
+          <li>Order Management</li>
+        </ul>
+      </div>
+      <div class="module">
+        <h3>Payments & Escrow</h3>
+        <ul>
+          <li>M-Pesa & Airtel Money</li>
+          <li>Escrow Service</li>
+          <li>Automated Invoicing</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const searchBtn = document.getElementById('searchCommodityBtn');
+    const commodIn  = document.getElementById('commodityInput');
+    const countySel = document.getElementById('countySelect');
+    const results   = document.getElementById('priceResults');
+  
+    searchBtn.addEventListener('click', () => {
+      const commod = commodIn.value.trim();
+      const county = countySel.value;
+      if (!commod) {
+        return alert('Please enter a commodity name.');
+      }
+  
+      // clear previous
+      results.innerHTML = '<p>Loading prices…</p>';
+  
+      fetch(`{% url 'api_market_prices' %}?commodity=${encodeURIComponent(commod)}&county=${encodeURIComponent(county)}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.error) {
+            results.innerHTML = `<p class="error">${data.error}</p>`;
+            return;
+          }
+          if (!data.results.length) {
+            results.innerHTML = `<p>No prices found for “${commod}” in ${county}.</p>`;
+            return;
+          }
+  
+          // build table
+          let html = `
+            <table>
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>County</th>
+                  <th>Market</th>
+                  <th>Commodity</th>
+                  <th>Price</th>
+                </tr>
+              </thead>
+              <tbody>
+          `;
+          data.results.forEach(item => {
+            html += `
+              <tr>
+                <td>${item.date}</td>
+                <td>${item.county}</td>
+                <td>${item.market}</td>
+                <td>${item.commodity}</td>
+                <td>${item.price}</td>
+              </tr>
+            `;
+          });
+          html += `</tbody></table>`;
+          results.innerHTML = html;
+        })
+        .catch(err => {
+          console.error(err);
+          results.innerHTML = `<p class="error">Unexpected error fetching market data.</p>`;
+        });
+    });
+  });
+  </script>
+  
+
+
+
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+  <script src="{% static 'js/app.js' %}" defer></script>
+  <script src="{% static 'js/themeToggle.js' %}" defer></script>
+</body>
+</html>

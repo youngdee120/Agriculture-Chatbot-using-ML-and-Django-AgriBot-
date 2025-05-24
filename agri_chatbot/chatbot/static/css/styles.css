@@ -1,0 +1,543 @@
+:root {
+  --color-primary:   #2e7d32;
+  --color-secondary: #8bc34a;
+  --color-accent:    #a1887f;
+  --color-bg-light:  #f1f8e9;
+  --color-bg-dark:   #424242;
+  --color-light:     #ffffff;
+  --color-dark:      #000000;
+  --panel-bg:        var(--color-light);
+  --panel-text:      var(--color-dark);
+  --font-main:       'Merriweather Sans', sans-serif;
+  --chat-size:       80px;
+  /* new bluish hover color */
+  --color-hover-bluish: #075fa6;
+}
+
+/* Dark mode overrides */
+html.dark {
+  --panel-bg:   var(--color-dark);
+  --panel-text: var(--color-light);
+  background:   var(--color-dark);
+  color:        var(--color-light);
+}
+
+/* Base styles */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  font-family: var(--font-main);
+  background: var(--color-bg-light);
+  color: var(--color-dark);
+  transition: background 0.3s, color 0.3s;
+}
+
+/* Navbar */
+.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  background: var(--color-primary);
+  z-index: 1000;
+}
+
+.nav-logo {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--color-light);
+}
+
+/* Remove dots from nav list */
+.nav-links {
+  list-style: none;
+  margin-left: auto;
+  display: flex;
+  gap: 1.5rem;
+  padding: 0;
+}
+
+.nav-links li {
+  list-style: none;
+}
+
+.nav-links a {
+  padding: 0.5rem;
+  color: var(--color-light);
+  text-decoration: none;
+  border-radius: 5px;
+  transition: color 0.2s, background 0.2s, text-decoration 0.2s;
+}
+
+/* Hover: bluish color + underline, no background */
+.nav-links a:hover {
+  color: white;
+  background: var(--color-hover-bluish);
+}
+
+/* Theme toggle */
+.theme-toggle {
+  background: none;
+  border: none;
+  color: var(--color-light);
+  font-size: 1.5rem;
+  margin-left: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.theme-toggle:hover {
+  transform: scale(1.2);
+}
+
+/* Panels wrapper */
+.index-panels {
+  display: flex;
+  gap: 1rem;
+  padding: 80px 1rem 1rem; /* leave room for navbar */
+  flex-wrap: wrap;
+}
+
+.index-panels .panel {
+  flex: 1 1 300px;
+  background: var(--panel-bg);
+  color: var(--panel-text);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* Left panel (Intro) */
+.left-panel h1 {
+  margin-top: 0;
+}
+
+.features-list {
+  list-style: none;
+  padding: 0;
+  margin: 1rem 0;
+}
+
+.features-list li {
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.large-btn {
+  margin-top: auto;
+  padding: 0.75rem 1.5rem;
+  background: var(--color-primary);
+  color: var(--color-light);
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.large-btn:hover {
+  background: var(--color-secondary);
+}
+
+/* Right panel (Weather + Map) */
+.weather-container {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.sub-container {
+  flex: 1;
+  overflow-y: auto;
+}
+
+#weatherPanel {
+  padding: 1rem;
+  background: var(--panel-bg);
+  color: var(--panel-text);
+}
+
+#map {
+  height: 100%;
+}
+
+/* Controls */
+.controls {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.input-text {
+  flex: 1;
+  padding: 0.5rem;
+}
+
+/* Spinner */
+.spinner {
+  width: 36px;
+  height: 36px;
+  margin: 1rem auto;
+  border: 4px solid var(--color-bg-light);
+  border-top: 4px solid var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Weather info */
+.parameter-container {
+  display: flex;
+  justify-content: space-between;
+  margin: 1rem 0;
+}
+
+.parameter {
+  text-align: center;
+}
+
+/* Crop & chart */
+#cropRec,
+#chartWrapper {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: rgba(139,195,74,0.1);
+  border-radius: 8px;
+}
+
+/* Marketplace panel */
+.marketplace-panel {
+  display: flex;
+  flex-direction: column;
+}
+
+.market-form {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.market-form input {
+  flex: 1 1 120px;
+  padding: 0.5rem;
+}
+
+.market-form .btn {
+  flex-shrink: 0;
+}
+
+.market-scroll {
+  overflow-x: auto;
+}
+
+.market-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.market-table th,
+.market-table td {
+  padding: 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Chat launcher */
+.chat-launcher {
+  position: fixed;
+  bottom: 20px; right: 20px;
+  width: var(--chat-size);
+  height: var(--chat-size);
+  background: var(--color-secondary);
+  color: var(--color-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  transition: background 0.2s, transform 0.2s;
+  z-index: 2000;
+}
+
+.chat-launcher:hover {
+  background: var(--color-primary);
+  transform: scale(1.1);
+}
+
+/* Responsive breakpoints */
+@media (max-width: 900px) {
+  .index-panels {
+    flex-direction: column;
+    padding-top: 80px;
+  }
+}
+
+/* ————————————————  
+   Liveness Container  
+   ———————————————— */
+.liveness {
+  margin-top: 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* Video side */
+.live-video video {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  object-fit: cover;
+}
+
+/* Chart side */
+.live-chart {
+  position: relative;
+  background: rgba(139,195,74,0.05);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+.live-chart canvas {
+  width: 100% !important;
+  height: auto !important;
+}
+
+/* Responsive: stack on narrow screens */
+@media (max-width: 700px) {
+  .liveness {
+    display: block;
+  }
+  .live-video,
+  .live-chart {
+    margin-bottom: 1rem;
+  }
+}
+
+
+
+
+
+
+/* ——————————————————————————————————————————————————————————————
+   Marketplace Section: Full‐width minus 10px gutters
+   —————————————————————————————————————————————————————————————— */
+   .agri-marketplace {
+    background: var(--color-bg-light);
+    padding: 2rem 5px;               /* 5px gutters */
+    box-sizing: border-box;
+  }
+  
+  /* Inner “container” now fluid: full width minus 10px total */
+  .agri-marketplace .container {
+    width: calc(100% - 10px);
+    margin: 0 auto 2rem;            /* bottom spacing */
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  /* Live Commodity Search */
+  .market-search {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .market-search input,
+  .market-search select {
+    flex: 1;
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+  }
+  .market-search .btn {
+    padding: 0 1.5rem;
+    background: var(--color-primary);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .market-search .btn:hover {
+    background: var(--color-secondary);
+  }
+  
+  /* Price Results */
+  .price-results {
+    margin-bottom: 2rem;
+  }
+  .price-results table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .price-results th,
+  .price-results td {
+    border: 1px solid #ddd;
+    padding: 0.75rem;
+    text-align: left;
+  }
+  .price-results th {
+    background: var(--color-primary);
+    color: #fff;
+  }
+  
+  /* Subtopic Links */
+  .subtopics {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .subtopics a {
+    background: var(--color-secondary);
+    color: #fff;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .subtopics a:hover {
+    background: #66aaff;
+  }
+  
+  /* Showcase Carousel – fluid width */
+  .showcase-carousel {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(25%, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .carousel-item {
+    position: relative;
+    overflow: hidden;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    height: 350px;                  /* taller for impact */
+  }
+  .carousel-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+  .carousel-item:hover img {
+    transform: scale(1.15);
+  }
+  .carousel-item .overlay {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
+    padding: 0.75rem;
+    text-align: center;
+    font-size: 1rem;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .carousel-item:hover .overlay {
+    opacity: 1;
+  }
+  
+  /* Modules Grid */
+  .modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+  .module {
+    background: var(--panel-bg);
+    color: var(--panel-text);
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+    padding: 1.5rem;               /* extra padding for balance */
+    transition: transform 0.2s;
+  }
+  .module:hover {
+    transform: translateY(-4px);
+  }
+  .module h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: var(--color-primary);
+  }
+  .module ul {
+    list-style: disc inside;
+  }
+  .module ul li {
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+  }
+  
+  /* Responsive Tweaks */
+  @media (max-width: 1024px) {
+    .modules-grid {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    }
+  }
+  @media (max-width: 768px) {
+    .showcase-carousel {
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    }
+    .modules-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+  
+
+
+
+
+
+
+
+
+
+
+  .price-results {
+    max-height: 300px;   /* or whatever fits your design */
+    overflow-y: auto;
+    margin-top: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0.5rem;
+    background: #fff;
+  }
+  
+  .price-results table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .price-results th,
+  .price-results td {
+    padding: 0.5rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .price-results thead {
+    position: sticky;
+    top: 0;
+    background: #f9f9f9;
+  }
+  
+  .price-results tr:hover {
+    background: #f1f1f1;
+  }
+  

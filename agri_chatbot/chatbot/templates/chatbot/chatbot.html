@@ -1,0 +1,132 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en" class="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kenya Agri Chatbot</title>
+  <link rel="stylesheet" href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" />
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}" />
+  <style>
+    :root { font-size: 16px; }
+    body, html { margin:0; padding:0; height:100%; font-family:var(--font-main); background:var(--color-bg); color:var(--color-dark); transition:background .3s,color .3s; overflow:hidden; }
+    html.dark body { background:#fff; color:#000; }
+    .navbar { position:fixed; top:0; left:0; right:0; height:60px; display:flex; align-items:center; padding:0 1rem; background:var(--color-primary); z-index:1000; }
+    .nav-logo { font-size:1.5rem; font-weight:700; color:var(--color-light); }
+    .nav-links { margin-left:auto; display:flex; gap:1rem; }
+    .nav-links a { color:var(--color-light); text-decoration:none; padding:0.5rem; }
+    .nav-links a:hover { background:var(--color-secondary); border-radius:4px; }
+    .theme-toggle { background:transparent; border:none; color:var(--color-light); font-size:1.5rem; margin-left:1rem; cursor:pointer; }
+
+    #main { display:flex; margin-top:60px; height:calc(100% - 60px); }
+    #image-panel { flex:1; position:relative; overflow:hidden; }
+    #image-panel img { width:100%; height:100%; object-fit:cover; }
+    #image-panel::before { content:'AgriBot Interactive: Your Farm’s Smart Companion for Market Prices, Localized Weather, and Expert Guidance'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:2.5rem; font-weight:700; color:rgba(255,255,255,0.9); animation:fadeMove 4s ease-in-out infinite; text-shadow:2px 2px 4px rgba(0,0,0,0.7); }
+    @keyframes fadeMove {0%{opacity:0;transform:translate(-50%,-60%);}50%{opacity:1;transform:translate(-50%,-50%);}100%{opacity:0;transform:translate(-50%,-40%);} }
+
+    #chat-panel { flex:1; display:flex; flex-direction:column; padding:1rem; background:var(--color-light); transition:background .3s; }
+    html.dark #chat-panel { background:#f7f9fc; }
+    #chat { flex:1; overflow-y:auto; padding:1rem; background:#e6f7ff; border-radius:8px; box-shadow:inset 0 0 10px rgba(0,0,0,0.1); transition:background .3s,color .3s; margin-bottom:1rem; }
+    html.dark #chat { background:#001f3f; color:#fff; }
+
+    .msg { display:flex; align-items:flex-start; margin:1rem 0; }
+    .msg.user { justify-content:flex-end; }
+    .bubble { max-width:65%; padding:0.75rem 1rem; border-radius:12px; line-height:1.4; font-size:1rem; }
+    .msg.user .bubble { background:#007bff; color:#fff; border-bottom-right-radius:0; }
+    html.dark .msg.user .bubble { background:#0056b3; }
+    .msg.bot .bubble { background:#cce5ff; color:#004085; border-bottom-left-radius:0; }
+    html.dark .msg.bot .bubble { background:#003366; color:#e6f7ff; }
+    .icon { width:32px; height:32px; margin:0 0.5rem; border-radius:50%; }
+
+    #loader { display:none; align-self:center; margin:1rem 0; }
+    .dot { width:10px; height:10px; margin:0 3px; background:var(--color-accent); border-radius:50%; display:inline-block; animation:blink 1s infinite; }
+    @keyframes blink {0%,80%,100%{opacity:0.2;}40%{opacity:1;} }
+
+    #extras { display:flex; gap:1rem; margin-bottom:0.5rem; justify-content:flex-end; align-items:center; }
+    .icon-btn { background:transparent; border:none; font-size:2rem; cursor:pointer; color:#000; transition:color .3s; }
+    .icon-btn:hover { color:var(--color-primary); }
+    html.dark .icon-btn { color:#00aaff; }
+    #file-upload, #video-stream { display:none; }
+
+    #voice-toggle { order:-2; font-size:1.1rem; }
+    #controls { display:flex; gap:0.5rem; padding-bottom:20px; align-items:center; }
+    #input { flex:1; padding:0.75rem; border:1px solid #ccc; border-radius:4px; font-size:1rem; }
+    html.dark #input { background:#e9ecef; color:#000; border-color:#bbb; }
+    #send { padding:0.75rem 1.5rem; background:#0056b3; color:#fff; border:none; border-radius:4px; cursor:pointer; font-size:1rem; }
+    #send:hover { background:#007bff; }
+    .clear-btn {
+      margin-left: auto;
+      background: transparent;
+      border: none;
+      font-size: 2.5rem;
+      cursor: pointer;
+      color: #000;
+      transition: color .3s;
+    }
+    html.dark .clear-btn {
+      color: #000;
+    }
+    html.dark .clear-btn {
+      color: #00aaff;
+    }
+    html.dark .clear-btn { color:#ddd; }
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <a class="nav-logo">AgriBot</a>
+    <ul class="nav-links">
+      <li><a href="{% url 'index' %}">Home</a></li>
+      <li><a href="#">My Weather</a></li>
+      <li><a href="{% url 'index' %}#marketplace">Marketplace</a></li>
+      <li><a href="{% url 'chat_interface' %}" class="btn">Chatbot</a></li>
+    </ul>
+    <button id="themeToggle" class="theme-toggle"><i class="bx bx-moon"></i></button>
+  </nav>
+
+  <div id="main">
+    <div id="image-panel">
+      <img src="{% static 'assets/chatbot.png' %}" alt="Illustration" />
+    </div>
+    <div id="chat-panel">
+      <button class="clear-btn" title="New Chat"><i class="bx bx-refresh"></i></button>
+      <div id="chat">
+        <div class="msg bot">
+          <img class="icon" src="{% static 'assets/logo.png' %}" alt="bot" />
+          <div class="bubble">Hello! How can I assist you today?</div>
+        </div>
+      </div>
+      <!-- video feed for webcam -->
+      <video id="video-stream" autoplay muted style="display:none;width:100%;max-height:200px;border-radius:8px;margin-bottom:1rem;"></video>
+      <div id="loader"><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+      <div id="extras">
+        <label id="voice-toggle" title="Text-to-Speech"><input type="checkbox" id="toggle-tts" checked/>Voice</label>
+        <label for="file-upload" class="icon-btn" title="Upload Image"><i class="bx bx-image"></i></label>
+        <input type="file" id="file-upload" accept="image/*" />
+        <button id="start-camera" class="icon-btn" title="Use Webcam"><i class="bx bx-camera"></i></button>
+        <button id="start-voice" class="icon-btn" title="Speak"><i class="bx bx-microphone"></i></button>
+      </div>
+      <div id="controls">
+        <input id="input" placeholder="Ask a question…" autofocus />
+        <button id="send" type="button">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded',()=>{
+      const themeToggle=document.getElementById('themeToggle'),themeIcon=themeToggle.querySelector('i');let isDark=localStorage.getItem('theme')==='dark';const updateTheme=()=>{document.documentElement.classList.toggle('dark',isDark);themeIcon.className=isDark?'bx bx-sun':'bx bx-moon';};themeToggle.onclick=()=>{isDark=!isDark;localStorage.setItem('theme',isDark?'dark':'light');updateTheme();};updateTheme();
+      const chat=document.getElementById('chat'),loader=document.getElementById('loader');const inputEl=document.getElementById('input'),sendBtn=document.getElementById('send');const ttsCheckbox=document.getElementById('toggle-tts');let ttsOn=ttsCheckbox.checked;ttsCheckbox.addEventListener('change',()=>{ttsOn=ttsCheckbox.checked;});
+      document.querySelector('.clear-btn').addEventListener('click',()=>{chat.innerHTML=`<div class="msg bot"><img class="icon" src="{% static 'assets/logo.png' %}" alt="bot" /><div class="bubble">Hello! How can I assist you today?</div></div>`;});
+      const fileUpload=document.getElementById('file-upload');function handleImage(file){const reader=new FileReader();reader.onload=e=>appendMsg('📷 Image attached','user');reader.readAsDataURL(file);}fileUpload.addEventListener('change',e=>{if(e.target.files[0])handleImage(e.target.files[0]);});
+      const startCamera=document.getElementById('start-camera'),video=document.getElementById('video-stream');let stream;startCamera.addEventListener('click',async()=>{if(!stream){stream=await navigator.mediaDevices.getUserMedia({video:true});video.srcObject=stream;video.style.display='block';startCamera.innerHTML='<i class="bx bx-camera-off"></i>';} else{stream.getTracks().forEach(t=>t.stop());stream=null;video.style.display='none';startCamera.innerHTML='<i class="bx bx-camera"></i>';}});
+      const recognition=new (window.SpeechRecognition||window.webkitSpeechRecognition)();recognition.onresult=e=>inputEl.value=e.results[0][0].transcript;document.getElementById('start-voice').addEventListener('click',()=>recognition.start());
+      function appendMsg(text,who){const div=document.createElement('div');div.className='msg '+who;const icon=document.createElement('img');icon.className='icon';icon.src=who==='bot'?'{% static "assets/ai.png" %}':'{% static "assets/mesages.png" %}';const bubble=document.createElement('div');bubble.className='bubble';bubble.innerText=text;if(who==='user')div.append(bubble,icon);else div.append(icon,bubble);chat.append(div);chat.scrollTop=chat.scrollHeight;}
+      async function sendQuery(q){loader.style.display='flex';const resp=await fetch("{% url 'chat_api' %}",{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':'{{ csrf_token }}'},body:JSON.stringify({query:q})});const data=await resp.json();loader.style.display='none';return data.answer;}
+      async function handleSend(){const txt=inputEl.value.trim();if(!txt)return;appendMsg(txt,'user');inputEl.value='';const ans=await sendQuery(txt);appendMsg(ans,'bot');if(ttsOn)speechSynthesis.speak(new SpeechSynthesisUtterance(ans));}
+      sendBtn.addEventListener('click',handleSend);inputEl.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();handleSend();}});
+    });
+  </script>
+</body>
+</html>
